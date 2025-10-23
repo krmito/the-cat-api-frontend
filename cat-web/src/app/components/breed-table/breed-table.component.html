@@ -1,0 +1,118 @@
+<div class="breed-table-container">
+  <h1>Tabla de Razas de Gatos</h1>
+
+  <!-- Buscador -->
+  <div class="search-section">
+    <div class="search-container">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="filterBreeds()"
+        placeholder="Buscar por nombre de raza"
+        class="search-input"
+      />
+      <button
+        (click)="filterBreeds()"
+        class="search-button"
+        [disabled]="loading"
+      >
+        🔍 Buscar
+      </button>
+    </div>
+    <span class="result-count">
+      Mostrando {{ filteredBreeds.length }} de {{ breeds.length }} razas
+    </span>
+  </div>
+
+  <!-- Indicador de carga -->
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Cargando razas...</p>
+  </div>
+
+  <!-- Mensaje de error -->
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <!-- Tabla -->
+  <div *ngIf="!loading && !error" class="table-wrapper">
+    <table class="breeds-table">
+      <thead>
+        <tr>
+          <th class="sortable" (click)="sortBy('name')">
+            Nombre {{ getSortIcon('name') }}
+          </th>
+          <th class="sortable" (click)="sortBy('origin')">
+            Origen {{ getSortIcon('origin') }}
+          </th>
+          <th>Temperamento</th>
+          <th class="sortable" (click)="sortBy('life_span')">
+            Esperanza de Vida {{ getSortIcon('life_span') }}
+          </th>
+          <th class="sortable center" (click)="sortBy('affection_level')">
+            Afecto {{ getSortIcon('affection_level') }}
+          </th>
+          <th class="sortable center" (click)="sortBy('energy_level')">
+            Energía {{ getSortIcon('energy_level') }}
+          </th>
+          <th class="sortable center" (click)="sortBy('intelligence')">
+            Inteligencia {{ getSortIcon('intelligence') }}
+          </th>
+          <th class="center">Imagen</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let breed of filteredBreeds">
+          <td class="breed-name">{{ breed.name }}</td>
+          <td>{{ breed.origin || 'N/A' }}</td>
+          <td class="temperament">
+            {{ getTruncatedTemperament(breed.temperament) }}
+          </td>
+          <td class="center">{{ breed.life_span || 'N/A' }} años</td>
+          <td class="center">
+            <div class="level-indicator">
+              <div
+                class="level-bar-small"
+                [style.width.%]="(breed.affection_level || 0) * 20"
+              ></div>
+            </div>
+            <span class="level-value">{{ breed.affection_level || 0 }}/5</span>
+          </td>
+          <td class="center">
+            <div class="level-indicator">
+              <div
+                class="level-bar-small"
+                [style.width.%]="(breed.energy_level || 0) * 20"
+              ></div>
+            </div>
+            <span class="level-value">{{ breed.energy_level || 0 }}/5</span>
+          </td>
+          <td class="center">
+            <div class="level-indicator">
+              <div
+                class="level-bar-small"
+                [style.width.%]="(breed.intelligence || 0) * 20"
+              ></div>
+            </div>
+            <span class="level-value">{{ breed.intelligence || 0 }}/5</span>
+          </td>
+          <td class="center">
+            <img
+              *ngIf="breed.image?.url"
+              [src]="breed.image?.url"
+              [alt]="breed.name"
+              class="breed-thumbnail"
+            />
+            <span *ngIf="!breed.image?.url" class="no-image-text">Sin imagen</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Mensaje de sin resultados -->
+    <div *ngIf="filteredBreeds.length === 0 && !loading" class="no-results">
+      <p>No se encontraron razas que coincidan con tu búsqueda.</p>
+    </div>
+  </div>
+</div>

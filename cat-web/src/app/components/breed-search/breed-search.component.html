@@ -1,0 +1,132 @@
+<div class="breed-search-container">
+  <h1>Buscador de Razas</h1>
+
+  <!-- Search Section -->
+  <div class="search-section">
+    <div class="search-box">
+      <input
+        type="text"
+        [(ngModel)]="searchTerm"
+        (keyup.enter)="searchBreeds()"
+        placeholder="Buscar por nombre, origen o temperamento..."
+        class="search-input"
+      />
+      <div class="search-actions">
+        <button
+          (click)="searchBreeds()"
+          class="search-button"
+          [disabled]="loading"
+        >
+          🔍 Buscar
+        </button>
+        <button
+          *ngIf="hasSearched"
+          (click)="clearSearch()"
+          class="clear-button"
+          [disabled]="loading"
+        >
+          ✕ Limpiar
+        </button>
+      </div>
+    </div>
+
+    <p class="search-hint">
+      Puedes buscar por nombre de raza
+    </p>
+  </div>
+
+  <!-- Loading Indicator -->
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Buscando razas...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error && !loading" class="error-message">
+    {{ error }}
+  </div>
+
+  <!-- Results Count -->
+  <div *ngIf="hasSearched && !loading && !error" class="results-count">
+    <p *ngIf="searchResults.length > 0">
+      Se encontraron <strong>{{ searchResults.length }}</strong> resultado(s) para "{{ searchTerm }}"
+    </p>
+    <p *ngIf="searchResults.length === 0" class="no-results-text">
+      No se encontraron resultados para "{{ searchTerm }}"
+    </p>
+  </div>
+
+  <!-- Search Results -->
+  <div *ngIf="hasSearched && !loading && !error && searchResults.length > 0" class="results-grid">
+    <div *ngFor="let result of searchResults" class="breed-card">
+      <!-- Image -->
+      <div class="card-image">
+        <img
+          *ngIf="result.image?.url"
+          [src]="result.image?.url"
+          [alt]="result.name"
+          class="breed-image"
+        />
+        <div *ngIf="!result.image?.url" class="no-image-placeholder">
+          <span>Sin imagen</span>
+        </div>
+      </div>
+
+      <!-- Content -->
+      <div class="card-content">
+        <h2 class="breed-name">{{ result.name }}</h2>
+
+        <div class="breed-origin" *ngIf="result.origin">
+          <strong>Origen:</strong> {{ result.origin }}
+        </div>
+
+        <div class="breed-description" *ngIf="result.description">
+          <p>{{ result.description }}</p>
+        </div>
+
+        <div class="breed-temperament" *ngIf="result.temperament">
+          <strong>Temperamento:</strong> {{ getTruncatedTemperament(result.temperament) }}
+        </div>
+
+        <div class="breed-stats">
+          <div class="stat-item" *ngIf="result.life_span">
+            <span class="stat-label">Esperanza de vida:</span>
+            <span class="stat-value">{{ result.life_span }} años</span>
+          </div>
+
+          <div class="stat-item" *ngIf="result.weight?.metric">
+            <span class="stat-label">Peso:</span>
+            <span class="stat-value">{{ result.weight?.metric }} kg</span>
+          </div>
+        </div>
+
+        <!-- Characteristics -->
+        <div class="characteristics">
+          <div class="characteristic" *ngIf="result.affection_level !== undefined">
+            <span class="char-label">Afecto:</span>
+            <div class="level-bar">
+              <div class="level-fill" [style.width.%]="result.affection_level * 20"></div>
+            </div>
+            <span class="char-value">{{ result.affection_level }}/5</span>
+          </div>
+
+          <div class="characteristic" *ngIf="result.energy_level !== undefined">
+            <span class="char-label">Energía:</span>
+            <div class="level-bar">
+              <div class="level-fill" [style.width.%]="result.energy_level * 20"></div>
+            </div>
+            <span class="char-value">{{ result.energy_level }}/5</span>
+          </div>
+
+          <div class="characteristic" *ngIf="result.intelligence !== undefined">
+            <span class="char-label">Inteligencia:</span>
+            <div class="level-bar">
+              <div class="level-fill" [style.width.%]="result.intelligence * 20"></div>
+            </div>
+            <span class="char-value">{{ result.intelligence }}/5</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

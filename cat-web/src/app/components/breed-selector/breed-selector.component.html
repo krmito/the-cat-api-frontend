@@ -1,0 +1,124 @@
+<div class="breed-selector-container">
+  <h1>Explorador de Razas de Gatos</h1>
+
+  <!-- Dropdown de selección -->
+  <div class="selector-section">
+    <label for="breed-select">Selecciona una raza:</label>
+    <select
+      id="breed-select"
+      [(ngModel)]="selectedBreedName"
+      (change)="onBreedSelect()"
+      class="breed-select"
+    >
+      <option value="">-- Selecciona una raza --</option>
+      <option *ngFor="let breed of breedNames" [value]="breed">
+        {{ breed }}
+      </option>
+    </select>
+  </div>
+
+  <!-- Indicador de carga -->
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Cargando...</p>
+  </div>
+
+  <!-- Mensaje de error -->
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <!-- Detalle de la raza seleccionada -->
+  <div *ngIf="selectedBreed && !loading" class="breed-detail">
+    <div class="detail-header">
+      <h2>{{ selectedBreed.name }}</h2>
+      <p class="origin" *ngIf="selectedBreed.origin">
+        <strong>Origen:</strong> {{ selectedBreed.origin }}
+      </p>
+    </div>
+
+    <div class="detail-content">
+      <!-- Imagen de la raza -->
+      <div class="image-container">
+        <img
+          *ngIf="breedImage"
+          [src]="breedImage"
+          [alt]="selectedBreed.name"
+          class="breed-image"
+        />
+        <div *ngIf="!breedImage" class="no-image">
+          <p>No hay imagen disponible</p>
+        </div>
+      </div>
+
+      <!-- Información de la raza -->
+      <div class="breed-info">
+        <div class="info-section" *ngIf="selectedBreed.description">
+          <h3>Descripción</h3>
+          <p>{{ selectedBreed.description }}</p>
+        </div>
+
+        <div class="info-section" *ngIf="selectedBreed.temperament">
+          <h3>Temperamento</h3>
+          <p>{{ selectedBreed.temperament }}</p>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-item" *ngIf="selectedBreed.life_span">
+            <strong>Esperanza de vida:</strong>
+            <span>{{ selectedBreed.life_span }} años</span>
+          </div>
+
+          <div class="info-item" *ngIf="selectedBreed.weight?.metric">
+            <strong>Peso:</strong>
+            <span>{{ selectedBreed.weight?.metric }} kg</span>
+          </div>
+        </div>
+
+        <!-- Niveles de características -->
+        <div class="characteristics">
+          <h3>Características</h3>
+          <div class="characteristic" *ngIf="selectedBreed.affection_level !== undefined">
+            <label>Nivel de afecto:</label>
+            <div class="level-bar">
+              <div class="level-fill" [style.width.%]="selectedBreed.affection_level * 20"></div>
+            </div>
+            <span>{{ selectedBreed.affection_level }}/5</span>
+          </div>
+
+          <div class="characteristic" *ngIf="selectedBreed.energy_level !== undefined">
+            <label>Nivel de energía:</label>
+            <div class="level-bar">
+              <div class="level-fill" [style.width.%]="selectedBreed.energy_level * 20"></div>
+            </div>
+            <span>{{ selectedBreed.energy_level }}/5</span>
+          </div>
+
+          <div class="characteristic" *ngIf="selectedBreed.intelligence !== undefined">
+            <label>Inteligencia:</label>
+            <div class="level-bar">
+              <div class="level-fill" [style.width.%]="selectedBreed.intelligence * 20"></div>
+            </div>
+            <span>{{ selectedBreed.intelligence }}/5</span>
+          </div>
+
+          <div class="characteristic" *ngIf="selectedBreed.child_friendly !== undefined">
+            <label>Amigable con niños:</label>
+            <div class="level-bar">
+              <div class="level-fill" [style.width.%]="selectedBreed.child_friendly * 20"></div>
+            </div>
+            <span>{{ selectedBreed.child_friendly }}/5</span>
+          </div>
+
+          <div class="characteristic" *ngIf="selectedBreed.dog_friendly !== undefined">
+            <label>Amigable con perros:</label>
+            <div class="level-bar">
+              <div class="level-fill" [style.width.%]="selectedBreed.dog_friendly * 20"></div>
+            </div>
+            <span>{{ selectedBreed.dog_friendly }}/5</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

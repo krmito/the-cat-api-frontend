@@ -1,0 +1,96 @@
+<div class="registro-container">
+  <div class="registro-card">
+    <h1>Crear Cuenta</h1>
+    <p class="subtitle">Regístrate para comenzar</p>
+
+    <form (ngSubmit)="onSubmit()" class="registro-form">
+      <!-- Name -->
+      <div class="form-group">
+        <label for="name">Nombre completo</label>
+        <input
+          type="text"
+          id="name"
+          [(ngModel)]="name"
+          name="name"
+          placeholder="Tu nombre"
+          class="form-input"
+          [disabled]="loading"
+          required
+        />
+      </div>
+
+      <!-- Email -->
+      <div class="form-group">
+        <label for="email">Correo electrónico</label>
+        <input
+          type="email"
+          id="email"
+          [(ngModel)]="email"
+          name="email"
+          placeholder="tu@email.com"
+          class="form-input"
+          [disabled]="loading"
+          required
+        />
+      </div>
+
+      <!-- Password -->
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input
+          type="password"
+          id="password"
+          [(ngModel)]="password"
+          name="password"
+          placeholder="Mínimo 6 caracteres"
+          class="form-input"
+          [disabled]="loading"
+          minlength="6"
+          required
+        />
+      </div>
+
+      <!-- Confirm Password -->
+      <div class="form-group">
+        <label for="confirmPassword">Confirmar contraseña</label>
+        <input
+          type="password"
+          id="confirmPassword"
+          [(ngModel)]="confirmPassword"
+          name="confirmPassword"
+          placeholder="Repite tu contraseña"
+          class="form-input"
+          [disabled]="loading"
+          minlength="6"
+          required
+        />
+      </div>
+
+      <!-- Success Message -->
+      <div *ngIf="success" class="success-message">
+        ¡Registro exitoso! Redirigiendo al login...
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="error" class="error-message">
+        {{ error }}
+      </div>
+
+      <!-- Submit Button -->
+      <button
+        type="submit"
+        class="submit-button"
+        [disabled]="loading"
+      >
+        <span *ngIf="!loading">Registrarse</span>
+        <span *ngIf="loading">Registrando...</span>
+      </button>
+
+      <!-- Login Link -->
+      <div class="login-link">
+        <span>¿Ya tienes cuenta?</span>
+        <a (click)="goToLogin()" class="link">Inicia sesión aquí</a>
+      </div>
+    </form>
+  </div>
+</div>

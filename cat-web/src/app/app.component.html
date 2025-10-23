@@ -1,0 +1,80 @@
+<div class="app-container">
+  <!-- Header -->
+  <header class="app-header">
+    <div class="header-content">
+      <h1 class="app-title">
+        <span class="cat-icon">🐱</span>
+        {{ title }}
+      </h1>
+      <nav class="nav-menu">
+        <ng-container *ngIf="currentUser">
+          <a
+            routerLink="/breeds"
+            routerLinkActive="active"
+            class="nav-link"
+          >
+            Explorador de Razas
+          </a>
+          <a
+            routerLink="/search"
+            routerLinkActive="active"
+            class="nav-link"
+          >
+            Buscador
+          </a>
+          <a
+            routerLink="/table"
+            routerLinkActive="active"
+            class="nav-link"
+          >
+            Tabla de Razas
+          </a>
+
+          <div class="nav-divider"></div>
+
+          <button
+            (click)="logout()"
+            class="nav-link logout-btn"
+          >
+            Cerrar Sesión
+          </button>
+        </ng-container>
+
+        <ng-container *ngIf="!currentUser">
+          <a
+            routerLink="/login"
+            routerLinkActive="active"
+            class="nav-link auth-link"
+          >
+            Iniciar Sesión
+          </a>
+          <a
+            routerLink="/registro"
+            routerLinkActive="active"
+            class="nav-link auth-link register"
+          >
+            Registrarse
+          </a>
+        </ng-container>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <router-outlet></router-outlet>
+  </main>
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <p>
+      Datos proporcionados por
+      <a href="https://thecatapi.com/" target="_blank" rel="noopener noreferrer">
+        The Cat API
+      </a>
+    </p>
+    <p class="copyright">
+      &copy; 2025 Cat Web - Prueba Técnica FullStack Node
+    </p>
+  </footer>
+</div>
