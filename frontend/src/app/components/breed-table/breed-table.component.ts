@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CatsService } from '../../services/cats.service';
 import { BreedSearchResult } from '../../models/breed.model';
+import { forkJoin, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-breed-table',
@@ -42,11 +44,53 @@ export class BreedTableComponent implements OnInit {
         );
 
         Promise.all(searchPromises).then(results => {
-          this.breeds = results
+          const breeds = results
             .filter(result => result && result.length > 0)
             .map(result => result![0]);
-          this.filteredBreeds = [...this.breeds];
-          this.loading = false;
+
+            const imageRequests = breeds.map(breed => {
+            if (breed.reference_image_id) {
+              return this.catsService.getImagesByBreedId(breed.id).pipe(
+                map(images => {
+                  if (images && images.length > 0) {
+                    breed.image = {
+                      id: images[0].id,
+                      url: images[0].url,
+                      width: images[0].width,
+                      height: images[0].height
+                    };
+                  }
+                  return breed;
+                }),
+                catchError(err => {
+                  console.error(`Error loading image for breed ${breed.id}:`, err);
+                  return of(breed);
+                })
+              );
+            } else {
+              return of(breed);
+            }
+          });
+
+          if (imageRequests.length > 0) {
+            forkJoin(imageRequests).subscribe({
+              next: (breedsWithImages) => {
+                this.breeds = breedsWithImages;
+                this.filteredBreeds = [...this.breeds];
+                this.loading = false;
+              },
+              error: (err) => {
+                console.error('Error loading images:', err);
+                this.breeds = breeds; // Mostrar resultados sin imágenes
+                this.filteredBreeds = [...this.breeds];
+                this.loading = false;
+              }
+            });
+          } else {
+            this.breeds = breeds;
+            this.filteredBreeds = [...this.breeds];
+            this.loading = false;
+          }
         }).catch(error => {
           console.error('Error loading breeds:', error);
           this.error = 'Error al cargar las razas';
