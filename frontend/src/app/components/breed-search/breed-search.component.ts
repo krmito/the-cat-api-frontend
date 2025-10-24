@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CatsService } from '../../services/cats.service';
 import { BreedSearchResult } from '../../models/breed.model';
+import { forkJoin, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-breed-search',
@@ -32,8 +34,49 @@ export class BreedSearchComponent {
 
     this.catsService.searchBreeds(this.searchTerm.trim(), true).subscribe({
       next: (results) => {
-        this.searchResults = results;
-        this.loading = false;
+        if (results.length > 0) {
+          const imageRequests = results.map(breed => {
+            if (breed.reference_image_id) {
+              return this.catsService.getImagesByBreedId(breed.id).pipe(
+                map(images => {
+                  if (images && images.length > 0) {
+                    breed.image = {
+                      id: images[0].id,
+                      url: images[0].url,
+                      width: images[0].width,
+                      height: images[0].height
+                    };
+                  }
+                  return breed;
+                }),
+                catchError(err => {
+                  console.error(`Error loading image for breed ${breed.id}:`, err);
+                  return of(breed); // Retornar el breed sin imagen en caso de error
+                })
+              );
+            } else {
+              console.log(`No reference_image_id for breed ${breed.name}, keeping existing image:`, breed.image);
+              return of(breed); // No hay reference_image_id, retornar el breed tal cual
+            }
+          });
+
+          // Ejecutar todas las peticiones en paralelo
+          forkJoin(imageRequests).subscribe({
+            next: (breedsWithImages) => {
+              console.log('Final breeds with images:', breedsWithImages);
+              this.searchResults = breedsWithImages;
+              this.loading = false;
+            },
+            error: (err) => {
+              console.error('Error loading images:', err);
+              this.searchResults = results; // Mostrar resultados sin imágenes
+              this.loading = false;
+            }
+          });
+        } else {
+          this.searchResults = results;
+          this.loading = false;
+        }
       },
       error: (err) => {
         console.error('Error searching breeds:', err);

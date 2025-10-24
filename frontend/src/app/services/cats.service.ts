@@ -69,6 +69,18 @@ export class CatsService {
   }
 
   /**
+   * Obtiene imágenes de una raza por su ID (con caché)
+   */
+  getImagesByBreedId(breedId: string): Observable<any[]> {
+    const cacheKey = `images_breed_${breedId}`;
+    return this.cacheService.cacheObservable(
+      cacheKey,
+      this.http.get<any[]>(`${this.apiUrl}/imagesByBreedId/${breedId}`),
+      this.CACHE_TTL
+    );
+  }
+
+  /**
    * Limpia el caché de razas
    */
   clearCache(): void {
