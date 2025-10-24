@@ -1,0 +1,50 @@
+# Dependencias
+node_modules
+npm-debug.log
+yarn-error.log
+
+# Build outputs
+dist
+.angular
+
+# Tests
+coverage
+*.spec.ts
+jest.config.js
+setup-jest.ts
+
+# Documentación
+*.md
+!README.md
+CACHE_STRATEGY.md
+
+# Git
+.git
+.gitignore
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.editorconfig
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Angular
+.angular/cache
+e2e
+
+# Archivos temporales
+*.log
+*.pid
+*.seed
+*.pid.lock
